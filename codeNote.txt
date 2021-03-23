@@ -1,0 +1,197 @@
+ // Scanner sc = new Scanner(new BufferedReader(new FileReader("matrix.txt")));
+        // int rows = 16;
+        // int columns = 16;
+        // double [][] myArray = new double[rows][columns];
+        // while(sc.hasNextLine()) {
+        //     for (int i=0; i<myArray.length; i++) {
+        //         String[] line = sc.nextLine().trim().split(" ");
+        //         for (int j=0; j<line.length; j++) {
+        //             myArray[i][j] = Double.parseDouble(line[j]);
+        //         }
+        //     }
+        // }
+
+        // System.out.println("LL:");
+        // HaarDWT.printArr(LL);
+        // System.out.println("LH:");
+        // HaarDWT.printArr(LH);
+        // System.out.println("HL:");
+        // HaarDWT.printArr(HL);
+        // System.out.println("HH:");
+        // HaarDWT.printArr(HH);
+
+        // HaarDWT.printArr(myArray);
+        // myArray = HaarDWT.discompose(myArray);
+        // double[][] LL = MatrixControl.getLL(myArray);
+        // double[][] LH = MatrixControl.getLH(myArray);
+        // double[][] HL = MatrixControl.getHL(myArray);
+        // double[][] HH = MatrixControl.getHH(myArray);
+        // System.out.println("Discompse:");
+        // HaarDWT.printArr(myArray);
+        // System.out.println("Assembly:");
+        // myArray = MatrixControl.getMatrix(LL, LH, HL, HH);
+        // HaarDWT.printArr(myArray);
+        // myArray = HaarDWT.inverse(myArray);
+        // System.out.println("Inverse:");
+        // HaarDWT.printArr(myArray);
+
+        // double image[][] = ImageControl.getRGB("E:\\Work\\PTIT\\DWT\\Lena.png");
+        // // HaarDWT.printArr(image);
+        // System.out.println(image.length + "  " + image[0].length);
+        // System.out.println(Color.WHITE.getRGB());
+        // ImageControl.makeBinary("E:\\Work\\PTIT\\DWT\\20190520_142043.jpg");
+        // System.out.println(System.getProperty("user.dir"));
+
+        // double[][] result = WaterMark.RM_RP("E:\\Work\\PTIT\\DWT\\20190520_142043.jpg", 
+        //     "E:\\Work\\PTIT\\DWT\\apple.jpg", "E:\\Work\\PTIT\\DWT\\Lena.png", 1);
+        // // String resultStr = "";
+        // // for(int i = 0; i < result.length; i++) {
+        // //     for(int j = 0; j < result[0].length; j++){
+        // //         resultStr += result[i][j] + " ";
+        // //     }
+        // // }
+        // // FileWriter myWriter = new FileWriter("result1.txt");
+        // // myWriter.write(resultStr);
+        // BufferedImage bufferedOut = new BufferedImage(result.length, result[0].length, BufferedImage.TYPE_INT_RGB);
+        // for(int i=0; i<result.length; i++){
+        //     for(int j=0; j<result[0].length; ++j){
+        //         // int tempRed = (int) result[i][j];
+        //         // if(tempRed > 255){
+        //         //     tempRed = 255;
+        //         // }
+        //         // else if(tempRed < 0) tempRed = 0;
+        //         // Color temp = new Color(tempRed, 0, 0);
+        //         bufferedOut.setRGB(i, j, (int) result[i][j]);
+        //     }
+        // }
+        // File fileOut = new File("MyImage");
+        // System.out.println(fileOut.getAbsolutePath());
+        // ImageIO.write(bufferedOut, "jpg", fileOut);
+
+        // WaterMark.inverse_RM_RP("E:\\Work\\PTIT\\DWT\\20190520_142043.jpg", "E:\\Work\\PTIT\\DWT\\MyImage.jpg", 1);
+        // System.out.println(Color.WHITE.getRGB());
+
+        // Random rand = new Random();
+        // double[][] temp = new double[16][16];
+        // for(int i = 0; i < 16; i++){
+        //     for(int j = 0; j < 16; j++) {
+        //         int tempNum = rand.nextInt(1000);
+        //         temp[i][j] =  tempNum;
+        //     }
+        // }
+        // System.out.println("Origin");
+        // HaarDWT.printArr(temp);
+        // temp = HaarDWT.discompose(temp);
+        // // System.out.println("Discompose");
+        // // HaarDWT.printArr(temp);
+        // double[][] LL = MatrixControl.getLL(temp);
+        // double[][] LH = MatrixControl.getLH(temp);
+        // double[][] HL = MatrixControl.getHL(temp);
+        // double[][] HH = MatrixControl.getHH(temp);
+        // LL = HaarDWT.discompose(LL);
+        // double[][] LL1 = MatrixControl.getLL(LL);
+        // double[][] LH1 = MatrixControl.getLH(LL);
+        // double[][] HL1 = MatrixControl.getHL(LL);
+        // double[][] HH1 = MatrixControl.getHH(LL);
+        // for(int i = 0; i < LL1.length; i++){
+        //     for(int j = 0; j < LL1[0].length; j++) {
+        //         LL1[i][j]++;
+        //     }
+        // }
+        // for(int i = 0; i < HH1.length; i++){
+        //     for(int j = 0; j < HH1[0].length; j++) {
+        //         HH1[i][j] = (double) 0;
+        //     }
+        // }
+        // LL = MatrixControl.getMatrix(LL1, LH1, HL1, HH1);
+        // System.out.println("LL changed");
+        // HaarDWT.printArr(LL);
+        // LL = HaarDWT.inverse(LL);
+        // System.out.println("LL inverse");
+        // HaarDWT.printArr(LL);
+        // temp = MatrixControl.getMatrix(LL, LH, HL, HH);
+        // temp = HaarDWT.inverse(temp);
+        // System.out.println("Inverse array");
+        // HaarDWT.printArr(temp);
+
+        // temp = HaarDWT.discompose(temp);
+        // System.out.println("Discompose inverse");
+        // HaarDWT.printArr(temp);
+
+        // LL = MatrixControl.getLL(temp);
+        // LL = HaarDWT.discompose(LL);
+        // System.out.println("Discompose inverse LL");
+        // HaarDWT.printArr(LL);
+
+
+
+double[][] result = WaterMark.RM_RP("E:\\Work\\PTIT\\DWT\\20190520_142043.jpg", 
+            "E:\\Work\\PTIT\\DWT\\apple.jpg", "E:\\Work\\PTIT\\DWT\\Lena.png", 50);
+        // String resultStr = "";
+        // for(int i = 0; i < result.length; i++) {
+        //     for(int j = 0; j < result[0].length; j++){
+        //         resultStr += result[i][j] + " ";
+        //     }
+        // }
+        // FileWriter myWriter = new FileWriter("result1.txt");
+        // myWriter.write(resultStr);
+        BufferedImage bufferedOut = new BufferedImage(result.length, result[0].length, BufferedImage.TYPE_INT_RGB);
+        for(int i=0; i<result.length; i++){
+            for(int j=0; j<result[0].length; ++j){
+                bufferedOut.setRGB(i, j, (int) result[i][j]);
+            }
+        }
+        File fileOut = new File("MyImage.jpg");
+        System.out.println(fileOut.getAbsolutePath());
+        ImageIO.write(bufferedOut, "jpg", fileOut);
+
+        double[][] img1 = ImageControl.getMatrix("MyImage.jpg");
+
+        img1 = HaarDWT.discompose(img1);
+        double[][] img1LL = MatrixControl.getLL(img1);
+        // 2nd pass
+        img1LL = HaarDWT.discompose(img1LL);
+        double[][] img1LL1 = MatrixControl.getLL(img1LL);
+        double[][] img1HH1 = MatrixControl.getHH(img1LL);
+         System.out.println("Embedded LL1 inverse:");
+        for(int i = 0; i < 10; i++){
+            System.out.print(img1LL1[0][i] + " ");
+        }
+        System.out.println("Embedded HH1 inverse:");
+        for(int i = 0; i < 10; i++){
+            System.out.print(img1HH1[0][i] + " ");
+        }
+        double[][] img2 = ImageControl.getMatrix("MyImage4.jpg");
+        img2 = HaarDWT.discompose(img2);
+        double[][] img2LL = MatrixControl.getLL(img2);
+        // 2nd pass
+        img2LL = HaarDWT.discompose(img2LL);
+        double[][] img2LL1 = MatrixControl.getLL(img2LL);
+        double[][] img2HH1 = MatrixControl.getHH(img2LL);
+        // double[][] embededImg1 = WaterMark.inverseCalculation(img1LL1, img2LL1,  50);
+        // double[][] embededImg2 = WaterMark.inverseCalculation(img1HH1, img2HH1,  50);
+
+        // bufferedOut = new BufferedImage(embededImg1.length, embededImg1[0].length, BufferedImage.TYPE_INT_RGB);
+        // for(int i=0; i<embededImg1.length; i++){
+        //     for(int j=0; j<embededImg1[0].length; ++j){
+        //         int temp = 0;
+        //         if(Double.compare(embededImg1[i][j],0) < 0) temp = -1;
+        //         bufferedOut.setRGB(i, j, temp);
+        //     }
+        // }
+        // fileOut = new File("MyImage1.jpg");
+        // System.out.println(fileOut.getAbsolutePath());
+        // ImageIO.write(bufferedOut, "jpg", fileOut);
+
+        // bufferedOut = new BufferedImage(embededImg2.length, embededImg2[0].length, BufferedImage.TYPE_INT_RGB);
+        // for(int i=0; i<embededImg2.length; i++){
+        //     for(int j=0; j<embededImg2[0].length; ++j){
+        //         int temp = 0;
+        //         if(Double.compare(embededImg2[i][j],0) < 0) temp = -1;
+        //         bufferedOut.setRGB(i, j, temp);
+        //     }
+        // }
+        // fileOut = new File("MyImage2.jpg");
+        // System.out.println(fileOut.getAbsolutePath());
+        // ImageIO.write(bufferedOut, "jpg", fileOut);
+        
