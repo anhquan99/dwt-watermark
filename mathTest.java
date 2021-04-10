@@ -12,8 +12,8 @@ public class mathTest {
 
   public static void main(String[] args) throws Exception {
     Scanner sc = new Scanner(new BufferedReader(new FileReader("matrix.txt")));
-    int rows = 16;
-    int columns = 16;
+    int rows = 4;
+    int columns = 4;
     double[][] myArray = new double[rows][columns];
     while (sc.hasNextLine()) {
       for (int i = 0; i < myArray.length; i++) {
