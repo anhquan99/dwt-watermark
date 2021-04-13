@@ -14,13 +14,13 @@ import javax.imageio.ImageIO;
 public class Test {
 
   public static void main(String[] args) throws Exception {
-    WaterMark.RM_RPColor(
-      "E:\\Work\\PTIT\\DWT\\laptop.jpg",
-      "E:\\Work\\PTIT\\DWT\\noon.jpg",
-      "E:\\Work\\PTIT\\DWT\\Lena.png",
-      20
+    WaterMark.RM_RP(
+      "E:\\Work\\PTIT\\DWT\\dwt-watermark\\laptop.jpg",
+      "E:\\Work\\PTIT\\DWT\\dwt-watermark\\noon.jpg",
+      "E:\\Work\\PTIT\\DWT\\dwt-watermark\\Lena.png",
+      10
     );
-    WaterMark.inverse_RM_RPColor("laptop.jpg", "laptopRM_RP.jpg", 20);
+    WaterMark.inverse_RM_RP("laptop.jpg", "laptopRM_RP.jpg", 10);
     // WaterMark.PT_AME("laptop.jpg", "Samurai.jpg", "glass.jpg", "noon.jpg", "Wallpaper-7.jpg", 3);
     // WaterMark.inverse_PT_AME("laptop.jpg", "laptopPT_AME.jpg", 3);
   }
