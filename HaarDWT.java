@@ -20,10 +20,10 @@ public class HaarDWT {
           (matrix[i][j * 2] - matrix[i][(j * 2) + 1]) / 2;
       }
     }
-
+      
     // vertical pass
     double tempArr[][] = copyArr(result);
-    for (int i = 0; i < halfWidth; i++) {
+    for (int i = 0; i < width; i++) {
       for (int j = 0; j < halfHeight; j++) {
         result[j][i] = (tempArr[j * 2][i] + tempArr[(j * 2) + 1][i]) / 2;
         result[j + halfHeight][i] =
@@ -43,7 +43,7 @@ public class HaarDWT {
 
     // vertical pass
     double tempArr[][] = copyArr(matrix);
-    for (int i = 0; i < halfWidth; i++) {
+    for (int i = 0; i < width; i++) {
       for (int j = 0; j < halfHeight; j++) {
         result[j * 2][i] = tempArr[j][i] + tempArr[j + halfHeight][i];
         result[(j * 2) + 1][i] = tempArr[j][i] - tempArr[j + halfHeight][i];
@@ -128,9 +128,10 @@ public class HaarDWT {
   public static void printArr(double[][] arr) {
     int width = arr[0].length;
     int height = arr.length;
+    System.out.println(width + " " + height);
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) {
-        System.out.print(arr[i][j] + "\t \t");
+        System.out.format("%30.2f", arr[i][j]);
       }
       System.out.println();
     }

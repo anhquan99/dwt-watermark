@@ -4,6 +4,14 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.imageio.ImageIO;
+import java.util.Scanner;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 
 public class ImageControl {
 
@@ -31,6 +39,38 @@ public class ImageControl {
       return null;
     }
   }
+
+  public static double[][] getMatrixText(String fileName) throws Exception {
+    Runtime cmd = Runtime.getRuntime();
+    Process process = cmd.exec(String.format("cmd.exe /c " + ".\\openDWT.py " + fileName));
+    process.waitFor();
+    StringBuilder builder = new StringBuilder();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    String tempLine;
+    while((tempLine = reader.readLine()) != null){
+      builder.append(tempLine);
+    }
+    if(!builder.toString().equalsIgnoreCase("success")) throw new Exception("File invalid \n" + builder.toString());
+    Scanner sc = new Scanner(new BufferedReader(new FileReader("imgMatrix.txt")));
+    int rows = 0, columns = 0;
+    while(sc.hasNextLine()) {
+      String[] line = sc.nextLine().trim().split(" ");
+      columns = line.length;
+      rows++;
+    }
+    double[][] myArray = new double[rows][columns];
+    sc = new Scanner(new BufferedReader(new FileReader("imgMatrix.txt")));
+    while(sc.hasNextLine()) {
+      for(int i = 0; i < myArray.length; i++){
+        String[] line = sc.nextLine().trim().split(" ");
+        for(int j = 0; j < myArray[0].length; j++){
+          myArray[i][j] = Double.parseDouble(line[j]);
+        }
+      }
+    }
+    return myArray;
+  }
+
   public static double[][] getMatrixRaw(String fileName) {
     try {
       String fileNameStr = getStrPath(fileName);
@@ -69,10 +109,12 @@ public class ImageControl {
           int avg = (r + b + g);
 
           if (avg >= 383) {
-            image[i][j] = Color.WHITE.getRGB();
+            image[i][j] = 1;
+            // image[i][j] = Color.WHITE.getRGB();
             // bufferedOut.setRGB(i, j, Color.WHITE.getRGB());
           } else {
             image[i][j] = 0;
+            // image[i][j] = Color.BLACK.getRGB();
             // bufferedOut.setRGB(i, j, Color.BLACK.getRGB());
           }
         }
@@ -96,7 +138,7 @@ public class ImageControl {
           int avg = (r + b + g);
 
           if (avg >= 383) {
-            image[i][j] = Color.WHITE.getRGB();
+            image[i][j] = 1;
             // bufferedOut.setRGB(i, j, Color.WHITE.getRGB());
           } else {
             image[i][j] = 0;
@@ -212,5 +254,27 @@ public class ImageControl {
   public static String getStrPath(String pathStr) {
     Path path = Paths.get(pathStr);
     return path.toString();
+  }
+  public static void saveImgFile(double[][] cover,String fileName, String extenstion) throws Exception {
+    File fout = new File("resultMatrix.txt");
+    FileOutputStream fos = new FileOutputStream(fout);
+    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+    for(int i = 0; i < cover.length; i++) {
+      for(int j = 0; j < cover[i].length; j++) {
+        bw.write((int) cover[i][j] + " ");
+      }
+      bw.newLine();
+    }
+    bw.close();
+    Runtime cmd = Runtime.getRuntime();
+    Process process = cmd.exec(String.format("cmd.exe /c " + ".\\saveDWT.py " + fileName + "." + extenstion));
+    process.waitFor();
+    StringBuilder builder = new StringBuilder();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    String tempLine;
+    while((tempLine = reader.readLine()) != null){
+      builder.append(tempLine);
+    }
+    if(!builder.toString().equalsIgnoreCase("Success")) throw new Exception("Failed to save file \n" + builder.toString());
   }
 }

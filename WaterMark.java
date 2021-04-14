@@ -8,16 +8,16 @@ import javax.imageio.ImageIO;
 
 public class WaterMark {
 
-  public static void RM_RP(
+public static void RM_RP(
     String cover,
     String embedImage1,
     String embedImage2,
     double alpha
   )
-    throws IOException {
+    throws Exception {
     double[][] binaryEmbedImage1 = ImageControl.makeBinary(embedImage1);
     double[][] binaryEmbedImage2 = ImageControl.makeBinary(embedImage2);
-    double[][] coverMatrix = ImageControl.getMatrix(cover);
+    double[][] coverMatrix = ImageControl.getMatrixText(cover);
 
     // get rgb
     double[][] resizeCover = MatrixControl.resizeToSquare(coverMatrix);
@@ -42,7 +42,10 @@ public class WaterMark {
     resizeCover =
       RM_RPCalculation(resizeCover, resizeImage1, resizeImage2, alpha);
     String coverFilename = cover.split("\\.")[0];
-    Test.saveImgFile(resizeCover, coverFilename + "RM_RP");
+    // String extenstion = cover.split("\\.")[1];
+    String extenstion = "png";
+
+    ImageControl.saveImgFile(resizeCover, coverFilename + "RM_RP", extenstion);
   }
   public static void RM_RPColor(
     String cover,
@@ -50,7 +53,7 @@ public class WaterMark {
     String embedImage2,
     double alpha
   )
-    throws IOException {
+    throws Exception {
     double[][] binaryEmbedImage1 = ImageControl.makeBinary(embedImage1);
     double[][] binaryEmbedImage2 = ImageControl.makeBinary(embedImage2);
     double[][] coverMatrix = ImageControl.getMatrixRaw(cover);
@@ -89,7 +92,10 @@ public class WaterMark {
     double[][] embedImg1,
     double[][] embedImg2,
     double alpha
-  ) {
+  )
+    throws Exception {
+    // original
+
     // // 1st pass
     double[][] coverWavelet = HaarDWT.discompose(coverColor);
     double[][] LL = MatrixControl.getLL(coverWavelet);
@@ -105,24 +111,25 @@ public class WaterMark {
     double[][] HH1 = MatrixControl.getHH(LL);
 
     // LL1
-    LL1 = embedCalculation(LL1, embedImg1, alpha);
-    System.out.println("Embedded LL1 discompose:");
-    for (int i = 0; i < 10; i++) {
-      System.out.print(LL1[0][i] + " ");
-    }
-    System.out.println();
-    // // HH1
-    HH1 = embedCalculation(HH1, embedImg2, alpha);
-    System.out.println("Embedded HH1 discompose:");
-    for (int i = 0; i < 10; i++) {
-      System.out.print(HH1[0][i] + " ");
-    }
-    System.out.println();
+    LL1 = WaterMark.embedCalculation(LL1, embedImg1, alpha);
+
+    // HH1
+    HH1 = WaterMark.embedCalculation(HH1, embedImg2, alpha);
+
     LL = MatrixControl.getMatrix(LL1, LH1, HL1, HH1);
+
     LL = HaarDWT.inverse(LL);
+
     coverWavelet = MatrixControl.getMatrix(LL, LH, HL, HH);
     coverWavelet = HaarDWT.inverse(coverWavelet);
 
+    for (int i = 0; i < coverWavelet.length; i++) {
+      for (int j = 0; j < coverWavelet[i].length; j++) {
+        if (coverWavelet[i][j] < 0) {
+          coverWavelet[i][j] = Math.abs(coverWavelet[i][j]) * alpha;
+        }
+      }
+    }
     return coverWavelet;
   }
 
@@ -133,17 +140,17 @@ public class WaterMark {
   )
     throws Exception {
     // resize original matrix
-    double[][] originalMatrix = ImageControl.getMatrix(original);
+    double[][] originalMatrix = ImageControl.getMatrixText(original);
     double[][] originalResizedMatrix = MatrixControl.resizeToSquare(
       originalMatrix
     );
-    double[][] embededMatrix = ImageControl.getMatrix(embeded);
+    double[][] embededMatrix = ImageControl.getMatrixText(embeded);
 
     // 1st pass
     // original
     originalResizedMatrix = HaarDWT.discompose(originalResizedMatrix);
     double[][] originalLL = MatrixControl.getLL(originalResizedMatrix);
-    // // embeded
+    // embeded
     embededMatrix = HaarDWT.discompose(embededMatrix);
     double[][] embededLL = MatrixControl.getLL(embededMatrix);
 
@@ -153,70 +160,40 @@ public class WaterMark {
     double[][] originalLL1 = MatrixControl.getLL(originalLL);
     double[][] originalHH1 = MatrixControl.getHH(originalLL);
 
-    System.out.println("original LL1 inverse:");
-    for (int i = 0; i < 10; i++) {
-      System.out.print(originalLL1[0][i] + " ");
-    }
-    System.out.println();
-    System.out.println("original HH1 inverse:");
-    for (int i = 0; i < 10; i++) {
-      System.out.print(originalHH1[0][i] + " ");
-    }
-    System.out.println();
-
     // embeded LL
     embededLL = HaarDWT.discompose(embededLL);
     double[][] embededLL1 = MatrixControl.getLL(embededLL);
     double[][] embededHH1 = MatrixControl.getHH(embededLL);
 
-    System.out.println("Embedded LL1 inverse:");
-    for (int i = 0; i < 10; i++) {
-      System.out.print(embededLL1[0][i] + " ");
-    }
-    System.out.println();
-    System.out.println("Embedded HH1 inverse:");
-    for (int i = 0; i < 10; i++) {
-      System.out.print(embededHH1[0][i] + " ");
-    }
-    System.out.println();
-
     // inverse calculation
-    String originalFilename = original.split("\\.")[0];
+    String orginalFilename = original.split("\\.")[0];
+    // String extenstion = original.split("\\.")[1];
 
-    double[][] embededImg1 = inverseCalculation(originalLL1, embededLL1, alpha);
-    System.out.println("Result Img LL:");
-    for (int i = 0; i < 10; i++) {
-      System.out.print(embededImg1[0][i] + " ");
-    }
-    System.out.println();
-    BufferedImage bufferedOut = new BufferedImage(
-      embededImg1.length,
-      embededImg1[0].length,
-      BufferedImage.TYPE_INT_RGB
+    String extenstion = "png";
+
+    double[][] embededImg1 = WaterMark.inverseCalculation(
+      originalLL1,
+      embededLL1,
+      alpha
     );
-    for (int i = 0; i < embededImg1.length; i++) {
-      for (int j = 0; j < embededImg1[0].length; ++j) {
-        bufferedOut.setRGB(i, j, (int) embededImg1[i][j]);
-      }
-    }
-    File fileOut = new File(originalFilename + "ExtractedLL" + ".jpg");
-    System.out.println(fileOut.getAbsolutePath());
-    ImageIO.write(bufferedOut, "jpg", fileOut);
-    double[][] embededImg2 = inverseCalculation(originalHH1, embededHH1, alpha);
 
-    System.out.println("Result Img HH:");
-    for (int i = 0; i < 10; i++) {
-      System.out.print(embededImg2[0][i] + " ");
-    }
-    System.out.println();
-    for (int i = 0; i < embededImg2.length; i++) {
-      for (int j = 0; j < embededImg2[0].length; ++j) {
-        bufferedOut.setRGB(i, j, (int) embededImg2[i][j]);
-      }
-    }
-    fileOut = new File(originalFilename + "ExtractedHH" + ".jpg");
-    System.out.println(fileOut.getAbsolutePath());
-    ImageIO.write(bufferedOut, "jpg", fileOut);
+    ImageControl.saveImgFile(
+      embededImg1,
+      orginalFilename + "RM_RP_ExtractedLL",
+      extenstion
+    );
+
+    double[][] embededImg2 = WaterMark.inverseCalculation(
+      originalHH1,
+      embededHH1,
+      alpha
+    );
+
+    ImageControl.saveImgFile(
+      embededImg2,
+      orginalFilename + "RM_RP_ExtractedHH",
+      extenstion
+    );
   }
 
   public static void inverse_RM_RPColor(
@@ -279,6 +256,7 @@ public class WaterMark {
     String originalFilename = original.split("\\.")[0];
 
     double[][] embededImg1 = inverseCalculation(originalLL1, embededLL1, alpha);
+
     System.out.println("Result Img LL:");
     for (int i = 0; i < 10; i++) {
       System.out.print(embededImg1[0][i] + " ");
@@ -297,6 +275,7 @@ public class WaterMark {
     File fileOut = new File(originalFilename + "ExtractedLL" + ".jpg");
     System.out.println(fileOut.getAbsolutePath());
     ImageIO.write(bufferedOut, "jpg", fileOut);
+    
     double[][] embededImg2 = inverseCalculation(originalHH1, embededHH1, alpha);
 
     System.out.println("Result Img HH:");
@@ -388,8 +367,14 @@ public class WaterMark {
 
     resizeCover = MatrixControl.getMatrix(LL, LH, HL, HH);
     resizeCover = HaarDWT.inverse(resizeCover);
-    String coverFilename = cover.split("\\.")[0];
-    Test.saveImgFile(resizeCover, coverFilename + "PT_AME");
+
+    // save file
+    String orginalFilename = cover.split("\\.")[0];
+    // String extenstion = original.split("\\.")[1];
+
+    String extenstion = "png";
+
+    ImageControl.saveImgFile(resizeCover, orginalFilename + "PT_AME", extenstion);
   }
 
   public static void inverse_PT_AME(String cover, String embeded, double alpha)
@@ -432,10 +417,12 @@ public class WaterMark {
     HaarDWT.printArrSmall(embedImg4, "embedImg4");
 
     String coverFilename = cover.split("\\.")[0];
-    Test.saveImgFileRaw(embedImg1, coverFilename + "EtractedPY_AME_LL");
-    Test.saveImgFileRaw(embedImg2, coverFilename + "EtractedPY_AME_LH");
-    Test.saveImgFileRaw(embedImg3, coverFilename + "EtractedPY_AME_HL");
-    Test.saveImgFileRaw(embedImg4, coverFilename + "EtractedPY_AME_HH");
+    String extenstion = "png";
+
+    ImageControl.saveImgFile(embedImg1, coverFilename + "EtractedPY_AME_LL", extenstion);
+    ImageControl.saveImgFile(embedImg2, coverFilename + "EtractedPY_AME_LH", extenstion);
+    ImageControl.saveImgFile(embedImg3, coverFilename + "EtractedPY_AME_HL", extenstion);
+    ImageControl.saveImgFile(embedImg4, coverFilename + "EtractedPY_AME_HH", extenstion);
   }
 
   public static double[][] embedCalculation(
@@ -446,7 +433,7 @@ public class WaterMark {
     double[][] result = new double[matrix.length][matrix.length];
     for (int i = 0; i < embedMatrix.length; i++) {
       for (int j = 0; j < embedMatrix.length; j++) {
-        result[i][j] = (double) (matrix[i][j] + (alpha * embedMatrix[i][j]));
+        result[i][j] = (matrix[i][j] + (alpha * embedMatrix[i][j]));
       }
     }
     return result;
@@ -460,7 +447,8 @@ public class WaterMark {
     double[][] result = new double[original.length][original.length];
     for (int i = 0; i < original.length; i++) {
       for (int j = 0; j < original.length; j++) {
-        result[i][j] = (double) ((embeded[i][j] - original[i][j]) / alpha);
+        result[i][j] = ((embeded[i][j] - original[i][j]) / alpha);
+        if(result[i][j] > 0) result[i][j] = 16777215;;
       }
     }
     return result;
