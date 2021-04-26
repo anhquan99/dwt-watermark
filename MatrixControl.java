@@ -180,7 +180,7 @@ public class MatrixControl {
       for (int i = 0; i < result.length; i++) {
         for (int j = 0; j < result.length; j++) {
           if (i >= matrix.length || j >= matrix[0].length) {
-            result[i][j] = -1;
+            result[i][j] = 0;
           } else {
             result[i][j] = matrix[i][j];
           }

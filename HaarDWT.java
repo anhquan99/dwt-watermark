@@ -125,6 +125,19 @@ public class HaarDWT {
     return result;
   }
 
+  public static void printArr(double[][] arr, String arrName) {
+    int width = arr[0].length;
+    int height = arr.length;
+    System.out.println(arrName);
+    System.out.println(width + " " + height);
+    for (int i = 0; i < height; i++) {
+      for (int j = 0; j < width; j++) {
+        System.out.format("%30.2f", arr[i][j]);
+      }
+      System.out.println();
+    }
+  }
+
   public static void printArr(double[][] arr) {
     int width = arr[0].length;
     int height = arr.length;

@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 
 public class WaterMark {
 
-public static void RM_RP(
+  public static void RM_RP(
     String cover,
     String embedImage1,
     String embedImage2,
@@ -47,6 +47,7 @@ public static void RM_RP(
 
     ImageControl.saveImgFile(resizeCover, coverFilename + "RM_RP", extenstion);
   }
+
   public static void RM_RPColor(
     String cover,
     String embedImage1,
@@ -84,7 +85,7 @@ public static void RM_RP(
     resizeRed = RM_RPCalculation(resizeRed, resizeImage1, resizeImage2, alpha);
 
     String coverFilename = cover.split("\\.")[0];
-    Test.saveImgFileColor(resizeRed, resizeGreen, resizeBlue, coverFilename + "RM_RP");
+    // Test.saveImgFileColor(resizeRed, resizeGreen, resizeBlue, coverFilename + "RM_RP");
   }
 
   public static double[][] RM_RPCalculation(
@@ -275,7 +276,7 @@ public static void RM_RP(
     File fileOut = new File(originalFilename + "ExtractedLL" + ".jpg");
     System.out.println(fileOut.getAbsolutePath());
     ImageIO.write(bufferedOut, "jpg", fileOut);
-    
+
     double[][] embededImg2 = inverseCalculation(originalHH1, embededHH1, alpha);
 
     System.out.println("Result Img HH:");
@@ -299,73 +300,68 @@ public static void RM_RP(
     String embedImage2,
     String embedImage3,
     String embedImage4,
-    double alpha
+    double alpha1,
+    double alpha2,
+    double alpha3,
+    double alpha4
   )
     throws Exception {
     double[][] binaryEmbedImage1 = ImageControl.makeBinary(embedImage1);
     double[][] binaryEmbedImage2 = ImageControl.makeBinary(embedImage2);
     double[][] binaryEmbedImage3 = ImageControl.makeBinary(embedImage3);
     double[][] binaryEmbedImage4 = ImageControl.makeBinary(embedImage4);
-    double[][] coverMatrix = ImageControl.getMatrix(cover);
+    double[][] coverMatrix = ImageControl.getMatrixText(cover);
 
     double[][] resizeCover = MatrixControl.resizeToSquare(coverMatrix);
 
-    double[][] squareImage1 = MatrixControl.resizeEmbedToSquare(
-      binaryEmbedImage1,
-      resizeCover.length
-    );
-    double[][] squareImage2 = MatrixControl.resizeEmbedToSquare(
-      binaryEmbedImage2,
-      resizeCover.length
-    );
-    double[][] squareImage3 = MatrixControl.resizeEmbedToSquare(
-      binaryEmbedImage3,
-      resizeCover.length
-    );
-    double[][] squareImage4 = MatrixControl.resizeEmbedToSquare(
-      binaryEmbedImage4,
-      resizeCover.length
-    );
+    // double[][] squareImage1 = MatrixControl.resizeEmbedToSquare(
+    //   binaryEmbedImage1,
+    //   resizeCover.length
+    // );
+    // double[][] squareImage2 = MatrixControl.resizeEmbedToSquare(
+    //   binaryEmbedImage2,
+    //   resizeCover.length
+    // );
+    // double[][] squareImage3 = MatrixControl.resizeEmbedToSquare(
+    //   binaryEmbedImage3,
+    //   resizeCover.length
+    // );
+    // double[][] squareImage4 = MatrixControl.resizeEmbedToSquare(
+    //   binaryEmbedImage4,
+    //   resizeCover.length
+    // );
 
-    double[][] resizeImage1 = MatrixControl.resizeToFitCover(
-      squareImage1,
+    double[][] resizeImage1 = MatrixControl.resizeToFitCoverPT_AME(
+      binaryEmbedImage1,
       resizeCover
     );
-    double[][] resizeImage2 = MatrixControl.resizeToFitCover(
-      squareImage2,
+    double[][] resizeImage2 = MatrixControl.resizeToFitCoverPT_AME(
+      binaryEmbedImage2,
       resizeCover
     );
-    double[][] resizeImage3 = MatrixControl.resizeToFitCover(
-      squareImage3,
+    double[][] resizeImage3 = MatrixControl.resizeToFitCoverPT_AME(
+      binaryEmbedImage3,
       resizeCover
     );
-    double[][] resizeImage4 = MatrixControl.resizeToFitCover(
-      squareImage4,
+    double[][] resizeImage4 = MatrixControl.resizeToFitCoverPT_AME(
+      binaryEmbedImage4,
       resizeCover
     );
 
     resizeCover = HaarDWT.discompose(resizeCover);
+    // HaarDWT.printArr(resizeCover, "resizeCover");
     double[][] LL = MatrixControl.getLL(resizeCover);
     double[][] LH = MatrixControl.getLH(resizeCover);
     double[][] HL = MatrixControl.getHL(resizeCover);
     double[][] HH = MatrixControl.getHH(resizeCover);
 
-    HaarDWT.printArrSmall(LL, "LL");
-    HaarDWT.printArrSmall(LH, "LH");
-    HaarDWT.printArrSmall(LH, "LH");
-    HaarDWT.printArrSmall(HH, "HH");
-
-    LL = embedCalculation(LL, resizeImage1, alpha);
-    LH = embedCalculation(LH, resizeImage2, alpha);
-    HL = embedCalculation(HL, resizeImage3, alpha);
-    HH = embedCalculation(HH, resizeImage4, alpha);
-
-    HaarDWT.printArrSmall(LL, "LL embeded");
-    HaarDWT.printArrSmall(LH, "LH embeded");
-    HaarDWT.printArrSmall(LH, "LH embeded");
-    HaarDWT.printArrSmall(HH, "HH embeded");
+    LL = embedCalculation(LL, resizeImage1, alpha1);
+    LH = embedCalculation(LH, resizeImage2, alpha2);
+    HL = embedCalculation(HL, resizeImage3, alpha3);
+    HH = embedCalculation(HH, resizeImage4, alpha4);
 
     resizeCover = MatrixControl.getMatrix(LL, LH, HL, HH);
+    // HaarDWT.printArr(resizeCover, "resizeCover");
     resizeCover = HaarDWT.inverse(resizeCover);
 
     // save file
@@ -374,13 +370,24 @@ public static void RM_RP(
 
     String extenstion = "png";
 
-    ImageControl.saveImgFile(resizeCover, orginalFilename + "PT_AME", extenstion);
+    ImageControl.saveImgFile(
+      resizeCover,
+      orginalFilename + "PT_AME",
+      extenstion
+    );
   }
 
-  public static void inverse_PT_AME(String cover, String embeded, double alpha)
+  public static void inverse_PT_AME(
+    String cover,
+    String embeded,
+    double alpha1,
+    double alpha2,
+    double alpha3,
+    double alpha4
+  )
     throws Exception {
-    double[][] coverMatrix = ImageControl.getMatrix(cover);
-    double[][] embededMatrix = ImageControl.getMatrix(embeded);
+    double[][] coverMatrix = ImageControl.getMatrixText(cover);
+    double[][] embededMatrix = ImageControl.getMatrixText(embeded);
 
     double[][] resizeCover = MatrixControl.resizeToSquare(coverMatrix);
 
@@ -390,39 +397,40 @@ public static void RM_RP(
     double[][] coverHL = MatrixControl.getHL(resizeCover);
     double[][] coverHH = MatrixControl.getHH(resizeCover);
 
-    HaarDWT.printArrSmall(coverLL, "coverLL");
-    HaarDWT.printArrSmall(coverLH, "coverLH");
-    HaarDWT.printArrSmall(coverLH, "coverLH");
-    HaarDWT.printArrSmall(coverHH, "coverHH");
-
     embededMatrix = HaarDWT.discompose(embededMatrix);
     double[][] embededLL = MatrixControl.getLL(embededMatrix);
     double[][] embededLH = MatrixControl.getLH(embededMatrix);
     double[][] embededHL = MatrixControl.getHL(embededMatrix);
     double[][] embededHH = MatrixControl.getHH(embededMatrix);
 
-    HaarDWT.printArrSmall(embededLL, "embededLL");
-    HaarDWT.printArrSmall(embededLH, "embededLH");
-    HaarDWT.printArrSmall(embededLH, "embededLH");
-    HaarDWT.printArrSmall(embededHH, "embededHH");
-
-    double[][] embedImg1 = inverseCalculation(coverLL, embededLL, alpha);
-    double[][] embedImg2 = inverseCalculation(coverLH, embededLH, alpha);
-    double[][] embedImg3 = inverseCalculation(coverHL, embededHL, alpha);
-    double[][] embedImg4 = inverseCalculation(coverHH, embededHH, alpha);
-
-    HaarDWT.printArrSmall(embedImg1, "embedImg1");
-    HaarDWT.printArrSmall(embedImg2, "embedImg2");
-    HaarDWT.printArrSmall(embedImg3, "embedImg3");
-    HaarDWT.printArrSmall(embedImg4, "embedImg4");
+    double[][] embedImg1 = inverseCalculation(coverLL, embededLL, alpha1);
+    double[][] embedImg2 = inverseCalculation(coverLH, embededLH, alpha2);
+    double[][] embedImg3 = inverseCalculation(coverHL, embededHL, alpha3);
+    double[][] embedImg4 = inverseCalculation(coverHH, embededHH, alpha4);
 
     String coverFilename = cover.split("\\.")[0];
     String extenstion = "png";
 
-    ImageControl.saveImgFile(embedImg1, coverFilename + "EtractedPY_AME_LL", extenstion);
-    ImageControl.saveImgFile(embedImg2, coverFilename + "EtractedPY_AME_LH", extenstion);
-    ImageControl.saveImgFile(embedImg3, coverFilename + "EtractedPY_AME_HL", extenstion);
-    ImageControl.saveImgFile(embedImg4, coverFilename + "EtractedPY_AME_HH", extenstion);
+    ImageControl.saveImgFile(
+      embedImg1,
+      coverFilename + "EtractedPT_AME_LL",
+      extenstion
+    );
+    ImageControl.saveImgFile(
+      embedImg2,
+      coverFilename + "EtractedPT_AME_LH",
+      extenstion
+    );
+    ImageControl.saveImgFile(
+      embedImg3,
+      coverFilename + "EtractedPT_AME_HL",
+      extenstion
+    );
+    ImageControl.saveImgFile(
+      embedImg4,
+      coverFilename + "EtractedPT_AME_HH",
+      extenstion
+    );
   }
 
   public static double[][] embedCalculation(
@@ -448,7 +456,7 @@ public static void RM_RP(
     for (int i = 0; i < original.length; i++) {
       for (int j = 0; j < original.length; j++) {
         result[i][j] = ((embeded[i][j] - original[i][j]) / alpha);
-        if(result[i][j] > 0) result[i][j] = 16777215;;
+        if (result[i][j] > 0) result[i][j] = 16777215;
       }
     }
     return result;

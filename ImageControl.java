@@ -1,17 +1,19 @@
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
+import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import javax.imageio.ImageIO;
 import java.util.Scanner;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileWriter;
-import java.io.FileOutputStream;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
+import javax.imageio.ImageIO;
 
 public class ImageControl {
 
@@ -42,28 +44,36 @@ public class ImageControl {
 
   public static double[][] getMatrixText(String fileName) throws Exception {
     Runtime cmd = Runtime.getRuntime();
-    Process process = cmd.exec(String.format("cmd.exe /c " + ".\\openDWT.py " + fileName));
+    Process process = cmd.exec(
+      String.format("cmd.exe /c " + ".\\openDWT.py " + fileName)
+    );
     process.waitFor();
     StringBuilder builder = new StringBuilder();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    BufferedReader reader = new BufferedReader(
+      new InputStreamReader(process.getInputStream())
+    );
     String tempLine;
-    while((tempLine = reader.readLine()) != null){
+    while ((tempLine = reader.readLine()) != null) {
       builder.append(tempLine);
     }
-    if(!builder.toString().equalsIgnoreCase("success")) throw new Exception("File invalid \n" + builder.toString());
-    Scanner sc = new Scanner(new BufferedReader(new FileReader("imgMatrix.txt")));
+    if (!builder.toString().equalsIgnoreCase("success")) throw new Exception(
+      "File invalid \n" + builder.toString()
+    );
+    Scanner sc = new Scanner(
+      new BufferedReader(new FileReader("imgMatrix.txt"))
+    );
     int rows = 0, columns = 0;
-    while(sc.hasNextLine()) {
+    while (sc.hasNextLine()) {
       String[] line = sc.nextLine().trim().split(" ");
       columns = line.length;
       rows++;
     }
     double[][] myArray = new double[rows][columns];
     sc = new Scanner(new BufferedReader(new FileReader("imgMatrix.txt")));
-    while(sc.hasNextLine()) {
-      for(int i = 0; i < myArray.length; i++){
+    while (sc.hasNextLine()) {
+      for (int i = 0; i < myArray.length; i++) {
         String[] line = sc.nextLine().trim().split(" ");
-        for(int j = 0; j < myArray[0].length; j++){
+        for (int j = 0; j < myArray[0].length; j++) {
           myArray[i][j] = Double.parseDouble(line[j]);
         }
       }
@@ -255,26 +265,60 @@ public class ImageControl {
     Path path = Paths.get(pathStr);
     return path.toString();
   }
-  public static void saveImgFile(double[][] cover,String fileName, String extenstion) throws Exception {
+
+  public static void saveImgFile(
+    double[][] cover,
+    String fileName,
+    String extenstion
+  )
+    throws Exception {
     File fout = new File("resultMatrix.txt");
     FileOutputStream fos = new FileOutputStream(fout);
     BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-    for(int i = 0; i < cover.length; i++) {
-      for(int j = 0; j < cover[i].length; j++) {
-        bw.write((int) cover[i][j] + " ");
+    for (int i = 0; i < cover.length; i++) {
+      for (int j = 0; j < cover[i].length; j++) {
+        int temp = (int) cover[i][j];
+        if (temp < 0) temp = 0;
+        bw.write(temp + " ");
       }
       bw.newLine();
     }
     bw.close();
     Runtime cmd = Runtime.getRuntime();
-    Process process = cmd.exec(String.format("cmd.exe /c " + ".\\saveDWT.py " + fileName + "." + extenstion));
+    Process process = cmd.exec(
+      String.format(
+        "cmd.exe /c " + ".\\saveDWT.py " + fileName + "." + extenstion
+      )
+    );
+    String fullFileName = fileName + "." + extenstion;
     process.waitFor();
     StringBuilder builder = new StringBuilder();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    BufferedReader reader = new BufferedReader(
+      new InputStreamReader(process.getInputStream())
+    );
     String tempLine;
-    while((tempLine = reader.readLine()) != null){
+    while ((tempLine = reader.readLine()) != null) {
       builder.append(tempLine);
     }
-    if(!builder.toString().equalsIgnoreCase("Success")) throw new Exception("Failed to save file \n" + builder.toString());
+    if (!builder.toString().equalsIgnoreCase("Success")) throw new Exception(
+      "Failed to save file \n" + builder.toString()
+    );
+    System.out.println("Saved file: " + fullFileName);
+    openFile(fullFileName);
+  }
+
+  private static void openFile(String fileName) {
+    try {
+      //constructor of file class having file as argument
+      File file = new File(fileName);
+      if (!Desktop.isDesktopSupported()) { //check if Desktop is supported by Platform or not
+        System.out.println("not supported");
+        return;
+      }
+      Desktop desktop = Desktop.getDesktop();
+      if (file.exists()) desktop.open(file); //checks file exists or not   //opens the specified file
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }
